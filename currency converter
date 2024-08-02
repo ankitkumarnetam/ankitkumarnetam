@@ -1,0 +1,114 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+ class CurrencyConverter extends JFrame {
+
+    private JTextField amountField;
+    private JComboBox<String> fromCurrency;
+    private JComboBox<String> toCurrency;
+    private JLabel resultLabel;
+
+    public CurrencyConverter() {
+        setTitle("Currency Converter");
+        setSize(400, 200);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        String[] currencies = {"USD", "EUR", "GBP"};
+
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+
+        JLabel amountLabel = new JLabel("Amount:");
+        amountLabel.setBounds(10, 20, 80, 25);
+        panel.add(amountLabel);
+
+        amountField = new JTextField(20);
+        amountField.setBounds(100, 20, 165, 25);
+        panel.add(amountField);
+        JLabel fromLabel = new JLabel("From:");
+        fromLabel.setBounds(10, 50, 80, 25);
+        panel.add(fromLabel);
+
+        fromCurrency = new JComboBox<>(currencies);
+        fromCurrency.setBounds(100, 50, 80, 25);
+        panel.add(fromCurrency);
+
+        JLabel toLabel = new JLabel("To:");
+        toLabel.setBounds(10, 80, 80, 25);
+        panel.add(toLabel);
+
+        toCurrency = new JComboBox<>(currencies);
+        toCurrency.setBounds(100, 80, 80, 25);
+        panel.add(toCurrency);
+
+        JButton convertButton = new JButton("Convert");
+        convertButton.setBounds(10, 110, 150, 25);
+        convertButton.addActionListener(new ConvertButtonListener());
+        panel.add(convertButton);
+        resultLabel = new JLabel("Result:");
+        resultLabel.setBounds(10, 140, 300, 25);
+        panel.add(resultLabel);
+
+        add(panel);
+    }
+
+    private class ConvertButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            try {
+                double amount = Double.parseDouble(amountField.getText());
+                String from = (String) fromCurrency.getSelectedItem();
+                String to = (String) toCurrency.getSelectedItem();
+                double result = convertCurrency(amount, from, to);
+                resultLabel.setText(String.format("Result: %.2f %s", result, to));
+            } catch (NumberFormatException ex) {
+                resultLabel.setText("Invalid amount");
+            }
+        }
+    }
+
+    private double convertCurrency(double amount, String from, String to) {
+        double rate = getExchangeRate(from, to);
+        return amount * rate;
+    }
+    private double getExchangeRate(String from, String to){ 
+        if (from.equals(to)) {
+            return 1.0;
+        }
+
+        switch (from) {
+            case "USD":
+                if (to.equals("EUR")) {
+                    return 0.85;
+                } else if (to.equals("GBP")) {
+                    return 0.75;
+                }
+                break;
+            case "EUR":
+                if (to.equals("USD")) {
+                    return 1.18;
+                } else if (to.equals("GBP")) {
+                    return 0.88;
+                }
+                break;
+            case "GBP":
+                if (to.equals("USD")) {
+                    return 1.33;
+                } else if (to.equals("EUR")) {
+                    return 1.14;
+                }
+                break;
+        }
+        return 1.0; // Default case (should not happen)
+    }
+ 
+    public static void main(String[] args){ 
+          CurrencyConverter converter = new CurrencyConverter();
+            converter.setVisible(true);
+        }
+    
+
+
+    
+
